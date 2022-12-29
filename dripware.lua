@@ -8,7 +8,7 @@ local ProgramBackground = Instance.new("Frame")
 local ButtonHolder = Instance.new("Frame")
 local UIListLayout = Instance.new("UIListLayout")
 local Name = Instance.new("TextLabel")
-local __ = Instance.new("Frame")
+local s__ = Instance.new("Frame")
 local Minimize = Instance.new("ImageButton")
 local CloseButton = Instance.new("ImageButton")
 local UICorner = Instance.new("UICorner")
@@ -30,8 +30,9 @@ local Frame_7 = Instance.new("Frame")
 local SettingsB = Instance.new("TextButton")
 local Frame_8 = Instance.new("Frame")
 local Frame_9 = Instance.new("Frame")
-local _ = Instance.new("Frame")
+local s_ = Instance.new("Frame")
 local TextBox = Instance.new("TextBox")
+local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
 
 --Properties:
 
@@ -68,19 +69,19 @@ Name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 Name.BackgroundTransparency = 1.000
 Name.Position = UDim2.new(0.201576576, 0, 0.15384616, 0)
 Name.Size = UDim2.new(0, 67, 0, 18)
-Name.Font = Enum.Font.Unknown
+Name.FontFace = Font.fromName("Ubuntu", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal)
 Name.Text = "Dripware"
 Name.TextColor3 = Color3.fromRGB(255, 224, 131)
 Name.TextScaled = true
 Name.TextSize = 14.000
 Name.TextWrapped = true
 
-__.Name = "__"
-__.Parent = ButtonHolder
-__.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-__.BackgroundTransparency = 1.000
-__.Position = UDim2.new(0.477796912, 0, 0.288461536, 0)
-__.Size = UDim2.new(0, 319, 0, 0)
+s__.Name = "s__"
+s__.Parent = ButtonHolder
+s__.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+s__.BackgroundTransparency = 1.000
+s__.Position = UDim2.new(0.477796912, 0, 0.288461536, 0)
+s__.Size = UDim2.new(0, 319, 0, 0)
 
 Minimize.Name = "Minimize"
 Minimize.Parent = ButtonHolder
@@ -238,12 +239,12 @@ Frame_9.Position = UDim2.new(0, 0, 1, 0)
 Frame_9.Size = UDim2.new(0, 84, 0.0500000007, 0)
 Frame_9.ZIndex = 2
 
-_.Name = "_"
-_.Parent = cool
-_.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-_.BackgroundTransparency = 1.000
-_.Position = UDim2.new(0.277108431, 0, 0.407096744, 0)
-_.Size = UDim2.new(0, 37, 0, 112)
+s_.Name = "s_"
+s_.Parent = cool
+s_.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+s_.BackgroundTransparency = 1.000
+s_.Position = UDim2.new(0.277108431, 0, 0.407096744, 0)
+s_.Size = UDim2.new(0, 37, 0, 112)
 
 TextBox.Parent = cool
 TextBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -251,120 +252,65 @@ TextBox.BackgroundTransparency = 0.900
 TextBox.BorderSizePixel = 0
 TextBox.Position = UDim2.new(0, 0, 0.928225756, 0)
 TextBox.Size = UDim2.new(0, 83, 0, 25)
-TextBox.Font = Enum.Font.Unknown
+TextBox.FontFace = Font.fromName("Ubuntu", Enum.FontWeight.ExtraLight, Enum.FontStyle.Italic)
 TextBox.PlaceholderText = "Search..."
 TextBox.Text = ""
 TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
 TextBox.TextSize = 14.000
 TextBox.TextWrapped = true
 
+UIAspectRatioConstraint.Parent = ProgramBackground
+UIAspectRatioConstraint.AspectRatio = 1.757
+
 -- Scripts:
+local script = Instance.new('LocalScript', ScreenGui)
 
-local function BGLTWG_fake_script() -- ScreenGui.LocalScript 
-	local script = Instance.new('LocalScript', ScreenGui)
+-- Wanted to see what ChatGPT could do so I asked it to make "OOP Toggle script using keycode"
+local minimize, close = ProgramBackground.ButtonHolder.Minimize, ProgramBackground.ButtonHolder.CloseButton;
+local meow = false;
+local TweenService = game:GetService("TweenService");
+local function dragify(MainFrame)
 
-	-- Wanted to see what ChatGPT could do so I asked it to make "OOP Toggle script using keycode"
-	local dripwareUI = script.Parent.ProgramBackground;
-	local minimize, close = dripwareUI.ButtonHolder.Minimize, dripwareUI.ButtonHolder.CloseButton;
-	local meow = false;
-	
-	-- This is it's attempt
-	local Kuton = {};
-	local UIS = game:GetService("UserInputService");
-	local TweenService = game:GetService("TweenService");
-	Kuton.__index = Kuton;
-	
-	function Kuton.new(guiObject)
-		local self = setmetatable({}, Kuton);
-		self.GuiObject = script.Parent.ProgramBackground;
-		self.GuiObject.Visible = false;
-		return self;
+	local dragging;
+	local dragInput;
+	local dragStart;
+	local startPos;
+
+	local function update(input)
+		local Delta = input.Position - dragStart;
+		local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y);
+		TweenService:Create(MainFrame, TweenInfo.new(.15), {Position = Position}):Play();
+		meow = false;
+		MainFrame.Rotation = 0;
+		minimize.ImageTransparency = 0;
+		close.ImageTransparency = 0;
 	end
-	
-	function Kuton:Toggle()
-		self.GuiObject.Visible = not self.GuiObject.Visible;
-	end
-	
-	local GUI = Kuton.new(game.StarterGui.ScreenGui);
-	UIS.InputBegan:Connect(function(inputObject)
-		if inputObject.KeyCode == Enum.KeyCode.RightShift then
-			GUI:Toggle();
-		end
-	end);
-	
-	-- Borrowed this from Infinite Yield since it resembles MacOS Dragging
-	function dragGUI(gui)
-	
-		task.spawn(function()
-			local dragging;
-			local dragInput;
-			local dragStart = Vector3.new(0, 0, 0);
-			local startPos;
-			local function update(input)
-				local delta = input.Position - dragStart;
-				local Position = UDim2.new(
-					startPos.X.Scale, 
-					startPos.X.Offset + delta.X, 
-					startPos.Y.Scale,
-					startPos.Y.Offset + delta.Y);
-				
-				-- I could add smoothing to this but I just wanted something to be *subtle*
-				TweenService:Create(gui, TweenInfo.new(.15), { Position = Position }):Play();
-				
-				-- A way to make it false for the minimizing- ln:74, func dripwareUI
-				meow = false;
-				gui.Rotation = 0;
-				minimize.ImageTransparency = 0;
-				close.ImageTransparency = 0;
-			end
-	
-			gui.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-					dragging = true;
-					dragStart = input.Position;
-					startPos = gui.Position;
-					input.Changed:Connect(function()
-						if input.UserInputState == Enum.UserInputState.End then
-							dragging = false;
-						end
-					end);
+
+	MainFrame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true;
+			dragStart = input.Position;
+			startPos = MainFrame.Position;
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false;
 				end
-			end);
-	
-			gui.InputChanged:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-					dragInput = input;
-				end
-			end);
-			UIS.InputChanged:Connect(function(input)
-				if input == dragInput and dragging then
-					update(input);
-				end
-			end);
-		end);
-	end
-	
-	dripwareUI.ButtonHolder.Minimize.MouseButton1Click:Connect(function()
-		TweenService:Create(dripwareUI, TweenInfo.new(1), { Position = UDim2.new(-0.22, 0, 0.308, 0) }):Play();
-		dripwareUI.Rotation = 90;
-		minimize.ImageTransparency = 1;
-		close.ImageTransparency = 1;
-		meow = true;
-	end);
-	
-	dripwareUI.MouseEnter:Connect(function()
-		if meow then
-			TweenService:Create(dripwareUI, TweenInfo.new(1), { Position = UDim2.new(-0.216, 0, 0.308, 0) }):Play();
+			end)
 		end
-	end);
-	
-	dripwareUI.MouseLeave:Connect(function()
-		if meow then
-			TweenService:Create(dripwareUI, TweenInfo.new(1), { Position = UDim2.new(-0.22, 0, 0.308, 0) }):Play();
+	end)
+
+	MainFrame.InputChanged:Connect(function(input)
+		if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+			dragInput = input;
 		end
-	end);
-	
-	dragGUI(dripwareUI);
-	
+	end)
+
+	game:GetService("UserInputService").InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input);
+		end
+	end)
 end
-coroutine.wrap(BGLTWG_fake_script)()
+
+dragify(ProgramBackground);	
