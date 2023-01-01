@@ -467,7 +467,7 @@ OwlHub.BackgroundColor3 = Color3.fromRGB(59, 59, 59)
 OwlHub.Position = UDim2.new(0, 0, 0.334070802, 0)
 OwlHub.Size = UDim2.new(0, 100, 0, 60)
 OwlHub.FontFace = Font.fromName("Ubuntu", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal)
-OwlHub.Text = "Infinite Yield"
+OwlHub.Text = "Owl Hub"
 OwlHub.TextColor3 = Color3.fromRGB(205, 243, 255)
 OwlHub.TextSize = 14.000
 
@@ -626,13 +626,13 @@ function DraggingFunction(DraggingFrame)
 		ScriptSplit:Destroy()
 	end)
 	CMDX.MouseButton1Click:Connect(function()
-		
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/KushinaAtori/Dripware/main/Scripts/CMDX.lua"))();
 	end)
 	InfiniteYield.MouseButton1Click:Connect(function()
-		
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/KushinaAtori/Dripware/main/Scripts/InfiniteYield.lua"))();
 	end)
 	OwlHub.MouseButton1Click:Connect(function()
-		
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt"))();
 	end)
 	-- Settings
 	Submit.MouseButton1Click:Connect(function()
